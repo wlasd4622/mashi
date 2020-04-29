@@ -38,7 +38,7 @@ class M extends pu {
             this.sendSmsTryCount += 1;
             if (this.sendSmsTryCount > 5) return false;
             await this.runPuppeteer({
-                headless: true
+                headless: false
             });
             await this.sleep(1000)
             let url = `http://mail.10086.cn/`
