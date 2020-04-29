@@ -32,13 +32,22 @@ class M extends pu {
         }
     }
 
+    async screenshot() {
+        //获取页面Dom对象
+        let body = await this.page.$('body');
+        //调用页面内Dom对象的 screenshot 方法进行截图
+        await body.screenshot({
+            path: `./temp/${new Date().getTime()}.png`
+        });
+    }
+    
     async sendSMS(content = '666') {
         try {
             this.log(`>>>sendSMS:${this.sendSmsTryCount}`);
             this.sendSmsTryCount += 1;
             if (this.sendSmsTryCount > 5) return false;
             await this.runPuppeteer({
-                headless: false
+                headless: true
             });
             await this.sleep(1000)
             let url = `http://mail.10086.cn/`
@@ -79,6 +88,7 @@ class M extends pu {
             await this.closePuppeteer();
         } catch (err) {
             this.log(err);
+            await this.screenshot()
             await this.sleep(1000 * 10)
             await this.closePuppeteer();
             await this.sendSMS(content)
