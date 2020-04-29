@@ -22,6 +22,8 @@ class M extends pu {
             let [key, value] = item.split('=');
             this.config[key] = value;
         });
+        await fsUtil.dirExists('./temp')
+        await fsUtil.dirExists('./temp/logs')
         await fsUtil.dirExists('./temp/data.json')
         this.list = JSON.parse(fs.readFileSync('./temp/data.json').toString() || '""') || []
     }
