@@ -40,7 +40,7 @@ class M extends pu {
             path: `./temp/${new Date().getTime()}.png`
         });
     }
-    
+
     async sendSMS(content = '666') {
         try {
             this.log(`>>>sendSMS:${this.sendSmsTryCount}`);
@@ -152,7 +152,7 @@ class M extends pu {
                     } catch (err) {
                         console.log(err);
                     }
-                    if (newIds.length) {
+                    if (ids.length) {
                         this.list = [...this.list, ...ids]
                         fs.writeFileSync('./temp/data.json', JSON.stringify(this.list))
                     }
@@ -160,7 +160,7 @@ class M extends pu {
             } catch (err) {
                 this.log(err);
             }
-            await this.sleep(4000)
+            await this.sleep(1000 * 60)
         } while (true)
     }
 

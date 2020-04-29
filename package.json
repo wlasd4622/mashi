@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "node main.js"
+    "dev": "node main.js",
+    "prd": "pm2 start main.js --name 码市1"
   },
   "keywords": [],
   "author": "",
