@@ -17,15 +17,19 @@ class M extends pu {
     }
 
     async init() {
-        let config = fs.readFileSync(path.join('/wwl_config')).toString();
-        config.split(/\n/g).map(item => {
-            let [key, value] = item.split('=');
-            this.config[key] = value;
-        });
-        await fsUtil.dirExists('./temp')
-        await fsUtil.dirExists('./temp/logs')
-        await fsUtil.dirExists('./temp/data.json')
-        this.list = JSON.parse(fs.readFileSync('./temp/data.json').toString() || '""') || []
+        try {
+            let config = fs.readFileSync(path.join('/wwl_config')).toString();
+            config.split(/\n/g).map(item => {
+                let [key, value] = item.split('=');
+                this.config[key] = value;
+            });
+            await fsUtil.dirExists('./temp')
+            await fsUtil.dirExists('./temp/logs')
+            await fsUtil.dirExists('./temp/data.json')
+            this.list = JSON.parse(fs.readFileSync('./temp/data.json').toString() || '""') || []
+        } catch (err) {
+            console.log(err);
+        }
     }
 
     async sendSMS(content = '666') {
@@ -113,10 +117,6 @@ class M extends pu {
                             newIds.push(id)
                         }
                     })
-                    if (newIds.length) {
-                        this.list = [...this.list, ...newIds]
-                        fs.writeFileSync('./temp/data.json', JSON.stringify(this.list))
-                    }
                     resolve(newIds)
                 } else {
                     reject();
@@ -137,7 +137,15 @@ class M extends pu {
                 let ids = await this.getData();
                 if (ids.length) {
                     this.sendSmsTryCount = 0;
-                    await this.sendSMS(ids[0])
+                    try {
+                        await this.sendSMS(ids[0])
+                    } catch (err) {
+                        console.log(err);
+                    }
+                    if (newIds.length) {
+                        this.list = [...this.list, ...ids]
+                        fs.writeFileSync('./temp/data.json', JSON.stringify(this.list))
+                    }
                 }
             } catch (err) {
                 this.log(err);
