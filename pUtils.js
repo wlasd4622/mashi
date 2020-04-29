@@ -56,7 +56,10 @@ class PU {
     this.log(`>>>runPuppeteer`);
     this.browser = await puppeteer.launch(Object.assign({}, {
       headless: false,
-      args: ['--start-maximized', '--disable-infobars']
+      args: [
+        '--no-sandbox',
+        '--disable-setuid-sandbox',
+      ]
     }, options));
     this.page = await this.browser.newPage();
     await this.page.setViewport({
