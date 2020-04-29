@@ -60,7 +60,7 @@ class M extends pu {
             await this.sleep()
             await this.pageSend.click('.PlaceHold')
             await this.sleep(500)
-            await this.pageSend.type('.addrText-input', '15011099312', {
+            await this.pageSend.type('.addrText-input', this.config.ms_user_name, {
                 delay: 200
             })
             await this.sleep()
