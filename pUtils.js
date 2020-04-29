@@ -29,10 +29,10 @@ class PU {
       info = moment().format('YYYY-MM-DD HH:mm:ss') + ' ' + info
       console.log(info);
       if (this.taskName) {
-        if (!fs.existsSync(`./logs/${this.taskName}/`)) {
-          fs.mkdirSync(`./logs/${this.taskName}/`)
+        if (!fs.existsSync(`./temp/logs/${this.taskName}/`)) {
+          fs.mkdirSync(`./temp/logs/${this.taskName}/`)
         }
-        fs.appendFileSync(`./logs/${this.taskName}/${moment().format('YYYY-MM-DD')}.log`, info +
+        fs.appendFileSync(`./temp/logs/${this.taskName}/${moment().format('YYYY-MM-DD')}.log`, info +
           '\n')
       } else {
         fs.appendFileSync(`./logs/${moment().format('YYYY-MM-DD')}.log`, info + '\n')
@@ -55,7 +55,7 @@ class PU {
   async runPuppeteer(options = {}) {
     this.log(`>>>runPuppeteer`);
     this.browser = await puppeteer.launch(Object.assign({}, {
-      headless: false,
+      headless: true,
       args: [
         '--no-sandbox',
         '--disable-setuid-sandbox',

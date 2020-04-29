@@ -2,7 +2,8 @@ let pu = require('./pUtils')
 let axios = require('axios')
 let fs = require('fs')
 let moment = require('moment');
-let { userName, password } = require('./config.js');
+let path = require('path')
+let fsUtil = require('./fsUtil')
 
 class M extends pu {
     constructor() {
@@ -10,12 +11,19 @@ class M extends pu {
         this.taskName = 'mashi'
         this.cookie = `_139_login_version=25; UUIDToken=c563c484-0525-4522-be69-92feb7170b39; _139_index_isSmsLogin=1; a_l=1585024975000|1887718527; a_l2=1585024975000|12|MTUwMTEwOTkzMTJ8MjAyMC0wMy0yNCAxMjo0Mjo1NXxiZEpzSmp2WG1MUko1T2MzOFBVd2UvWnN4ZktZMkRpME8rTnZ6R1pDQTFzPXxlZjViMTEyYTk2NTIxYjIzMmUwOWU2MmI2MTg2OGJjNQ==; RMKEY=f7f8ce53754c8727; Os_SSo_Sid=00U2OTQ3Mjk3NTAwMTk0NDU005087B73000001; cookiepartid3124=12; cookiepartid=12; Login_UserNumber=15011099312; UserData={}; SkinPath23124=; rmUin3124=1336440719; provCode3124=6; areaCode3124=600; loginProcessFlag=`;
         this.list = [];
+        this.config = {};
         this.init();
         this.sendSmsTryCount = 0;
     }
 
     async init() {
-        this.list = JSON.parse(fs.readFileSync('./data.json').toString() || '""') || []
+        let config = fs.readFileSync(path.join('/wwl_config')).toString();
+        config.split(/\n/g).map(item => {
+            let [key, value] = item.split('=');
+            this.config[key] = value;
+        });
+        await fsUtil.dirExists('./temp/data.json')
+        this.list = JSON.parse(fs.readFileSync('./temp/data.json').toString() || '""') || []
     }
 
     async sendSMS(content = '666') {
@@ -32,8 +40,8 @@ class M extends pu {
                 waitUntil: 'domcontentloaded'
             });
             await this.page.waitForSelector('#J_loginFormHeight');
-            await this.page.type('#txtUser', userName)
-            await this.page.type('#txtPass', password)
+            await this.page.type('#txtUser', this.config.ms_user_name)
+            await this.page.type('#txtPass', this.config.ms_password)
             await this.sleep()
             await this.page.click('#loginBtn')
             await this.page.waitForSelector('#welcome');
@@ -105,7 +113,7 @@ class M extends pu {
                     })
                     if (newIds.length) {
                         this.list = [...this.list, ...newIds]
-                        fs.writeFileSync('./data.json', JSON.stringify(this.list))
+                        fs.writeFileSync('./temp/data.json', JSON.stringify(this.list))
                     }
                     resolve(newIds)
                 } else {
